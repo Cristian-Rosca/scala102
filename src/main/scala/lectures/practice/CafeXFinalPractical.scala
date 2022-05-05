@@ -9,18 +9,22 @@ object CafeXFinalPractical extends App {
   case class MenuItem(name: String, foodOrDrink: FoodOrDrink, hotOrCold: HotOrCold, cost: Double, isPremium: Boolean)
 
   sealed trait HotOrCold
+
   object HotOrCold {
     case object Hot extends HotOrCold
+
     case object Cold extends HotOrCold
   }
 
   sealed trait FoodOrDrink
+
   object FoodOrDrink {
     case object Food extends FoodOrDrink
+
     case object Drink extends FoodOrDrink
   }
 
-// Menu
+  // Menu
   val cola = MenuItem("Cola", Drink, Cold, 0.50, false)
   val coffee = MenuItem("Cola", Drink, Hot, 1.00, false)
   val cheeseSandwich = MenuItem("Cheese Sandwich", Food, Cold, 2.00, false)
@@ -28,15 +32,15 @@ object CafeXFinalPractical extends App {
   val lobster = MenuItem("Lobster", Food, Hot, 25.00, true)
 
 
-// Customers
-case class Customer(name: String, loyaltyStars: Int)
+  // Customers
+  case class Customer(name: String, loyaltyStars: Int)
 
-// Sample Customer
-val karen = Customer("Karen", 10)
+  // Sample Customer
+  val karen = Customer("Karen", 10)
 
 
-// Bill Calculator Method
-// Takes a list of ordered items and the customer
+  // Bill Calculator Method
+  // Takes a list of ordered items and the customer
   def billCalculator(customerOrder: List[MenuItem], customer: Customer) = {
     // Sum of all items in order list
     val price = customerOrder.map(x => x.cost).sum
@@ -54,24 +58,24 @@ val karen = Customer("Karen", 10)
       (price - nonDiscountablePrice) * loyaltyDiscountPercentage
     }
 
-  // Full order price - Loyalty discount
+    // Full order price - Loyalty discount
     val loyaltyPrice = price - loyaltyDiscount
 
-  // What rate is the service charge based on
+    // What rate is the service charge based on
     val tipMultiplier = {
       if (customerOrder.find(x => (x.isPremium == true) && (x.foodOrDrink == Food)).isDefined) 0.25 // 20% service charge if premium food in order
-      else if(customerOrder.find(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)).isDefined) 0.20 // 20% service charge if hot food in order
+      else if (customerOrder.find(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)).isDefined) 0.20 // 20% service charge if hot food in order
       else if (customerOrder.find(x => FoodOrDrink == Food).isDefined) 0.1 // 10% service charge if food in order
       else 0 // No service charge if no items are foods
     }
 
-  // Service Charge
-  // Calculated based on loyaltyPrice (Full order price - Loyalty discount)
+    // Service Charge
+    // Calculated based on loyaltyPrice (Full order price - Loyalty discount)
     val serviceCharge: Double = {
-      if(customerOrder.find(x => (x.isPremium == true) && (x.foodOrDrink == Food)).isDefined)
+      if (customerOrder.find(x => (x.isPremium == true) && (x.foodOrDrink == Food)).isDefined)
         if (loyaltyPrice * tipMultiplier >= 40) 40 // Maximum of £40 if premium items in order
         else loyaltyPrice * tipMultiplier
-      else if(customerOrder.find(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)).isDefined)
+      else if (customerOrder.find(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)).isDefined)
         if (loyaltyPrice * tipMultiplier >= 20) 20 // Maximum of £40 if premium items in order
         else loyaltyPrice * tipMultiplier
       else loyaltyPrice * tipMultiplier
@@ -82,30 +86,36 @@ val karen = Customer("Karen", 10)
     println(s"Thank you for shopping with us, ${customer.name}!")
 
     println("Please see your order summary below")
+    println("---------")
     println("*Premium Items*")
-    for(element<-premiumItemNames)
-      { println(element) }
+    for (element <- premiumItemNames) {
+      println(element)
+    }
+
     println("---------")
     println("*Food*")
-    for(element<-foodNames)
-    { println(element) }
+    for (element <- foodNames) {
+      println(element)
+    }
+
     println("---------")
     println("*Drinks*")
-    for(element<-drinkNames)
-     { println(element) }
+    for (element <- drinkNames) {
+      println(element)
+    }
+
+
     println("---------")
-
-
     println(f"The cost of your items is: £$price%.2f")
     println(f"Based on ${customer.loyaltyStars} loyalty stars, you received a loyalty discount of: £$loyaltyDiscount%.2f")
     println(f"The service charge is: £$serviceCharge%.2f")
     println("---------")
     println(f"The total for the order is: £$totalCharge%.2f")
 
-    }
+  }
 
 
-  val order = List (coffee, lobster, lobster, coffee, cheeseSandwich)
+  val order = List(cheeseSandwich, steakSandwich, lobster)
 
   val premiumItemNames = {
     val premiumItems = order.filter(x => (x.isPremium == true))
@@ -125,8 +135,7 @@ val karen = Customer("Karen", 10)
   billCalculator(order, karen)
 
 
-
-  }
+}
 
 
 
