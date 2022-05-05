@@ -39,10 +39,10 @@ object CafeXFinalPractical extends App {
   val karen = Customer("Karen", 10)
 
 
-  // Bill Calculator Method
+  // Bill Calculator
   // Takes a list of ordered items and the customer
   def billCalculator(customerOrder: List[MenuItem], customer: Customer) = {
-    // Sum of all items in order list
+    // Sum of cost of all items in order list
     val price = customerOrder.map(x => x.cost).sum
 
     // Calculates the loyalty discount for the customer
@@ -52,8 +52,8 @@ object CafeXFinalPractical extends App {
         else if (customer.loyaltyStars < 9) customer.loyaltyStars * 0.025
         else 0.2
 
-      val premiumItems = customerOrder.filter(x => (x.isPremium == true))
-      val nonDiscountablePrice = premiumItems.map(x => x.cost).sum
+      val premiumItemsList = customerOrder.filter(x => (x.isPremium == true))
+      val nonDiscountablePrice = premiumItemsList.map(x => x.cost).sum
 
       (price - nonDiscountablePrice) * loyaltyDiscountPercentage
     }
@@ -61,7 +61,7 @@ object CafeXFinalPractical extends App {
     // Full order price - Loyalty discount
     val loyaltyPrice = price - loyaltyDiscount
 
-    // What rate is the service charge based on
+    // Calculates rate that Service Charge is based on
     val tipMultiplier = {
       if (customerOrder.find(x => (x.isPremium == true) && (x.foodOrDrink == Food)).isDefined) 0.25 // 20% service charge if premium food in order
       else if (customerOrder.find(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)).isDefined) 0.20 // 20% service charge if hot food in order
@@ -83,6 +83,7 @@ object CafeXFinalPractical extends App {
 
     val totalCharge = loyaltyPrice + serviceCharge
 
+    // Statements to print customer bill
     println(s"Thank you for shopping with us, ${customer.name}!")
 
     println("Please see your order summary below")
@@ -114,13 +115,16 @@ object CafeXFinalPractical extends App {
 
   }
 
-
+// Sample customer order
   val order = List(cheeseSandwich, steakSandwich, lobster)
 
+// Creates a list of premium items in the order to be printed on receipt
   val premiumItemNames = {
     val premiumItems = order.filter(x => (x.isPremium == true))
     premiumItems.map(x => x.name)
   }
+
+  // Creates a list of premium items in the order to be printed on receipt
 
   val foodNames = {
     val foodItems = order.filter(x => (x.isPremium == false) && (x.foodOrDrink == Food))
