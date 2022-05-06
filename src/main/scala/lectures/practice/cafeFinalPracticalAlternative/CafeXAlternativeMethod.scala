@@ -1,4 +1,4 @@
-package lectures.practice.cafePractical
+package lectures.practice.cafeFinalPracticalAlternative
 
 object CafeXAlternativeMethod extends App {
 
