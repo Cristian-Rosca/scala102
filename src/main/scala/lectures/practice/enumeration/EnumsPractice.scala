@@ -1,6 +1,6 @@
-package lectures.practice
+package lectures.practice.enumeration
 
-import lectures.practice.EnumsPractice.Month.{January, February, March, April, May, June, July, August, September, October, November, December}
+import lectures.practice.enumeration.EnumsPractice.Month.{April, February, January, March, May, June, July, August, September, October, November, December}
 
 object EnumsPractice extends App {
 
@@ -54,6 +54,6 @@ object EnumsPractice extends App {
 
   // print out all the values of the enum now, what approach could we use?
 
-val caseObjectMonths = Seq(January, February, March, April, May, June, July, August, September, October, November, December)
-println(caseObjectMonths)
+  val caseObjectMonths = Seq(January, February, March, April, May, June, July, August, September, October, November, December)
+  println(caseObjectMonths)
 }

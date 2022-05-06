@@ -1,4 +1,4 @@
-package lectures.practice
+package lectures.practice.maps
 
 object ExtraMapsPractice extends App {
 
@@ -6,12 +6,12 @@ object ExtraMapsPractice extends App {
   Write a function that accepts an optional Int and multiplies the integer by 12, if nothing is supplied return 12
   */
 
-def multiplyBy12orReturn: (Option[Int]) => Int = input => {
-  input match {
-    case None => 12
-    case Some(value) => value * 12
+  def multiplyBy12orReturn: (Option[Int]) => Int = input => {
+    input match {
+      case None => 12
+      case Some(value) => value * 12
+    }
   }
-}
 
   /*
   The following value is created to model recent exam results. Where a None means that the student did not attend.
@@ -29,8 +29,8 @@ def multiplyBy12orReturn: (Option[Int]) => Int = input => {
   val didNotAttend = scores.filter(_.isEmpty)
 
 
-  var updatedScores = scores.flatMap{ case None => Option("F"); case x => x }
+  var updatedScores = scores.flatMap { case None => Option("F"); case x => x }
 
-println(updatedScores)
+  println(updatedScores)
 
 }

@@ -1,7 +1,7 @@
-package lectures.practice
+package lectures.practice.cafePractical
 
-import lectures.practice.CafeXFinalPractical.HotOrCold._
-import lectures.practice.CafeXFinalPractical.FoodOrDrink._
+import lectures.practice.cafePractical.CafeXFinalPractical.FoodOrDrink._
+import lectures.practice.cafePractical.CafeXFinalPractical.HotOrCold._
 
 object CafeXFinalPractical extends App {
 
@@ -115,10 +115,10 @@ object CafeXFinalPractical extends App {
 
   }
 
-// Sample customer order
+  // Sample customer order
   val order = List(cheeseSandwich, steakSandwich, lobster)
 
-// Creates a list of premium items in the order to be printed on receipt
+  // Creates a list of premium items in the order to be printed on receipt
   val premiumItemNames = {
     val premiumItems = order.filter(x => (x.isPremium == true))
     premiumItems.map(x => x.name)
@@ -140,12 +140,3 @@ object CafeXFinalPractical extends App {
 
 
 }
-
-
-
-
-
-
-
-
-

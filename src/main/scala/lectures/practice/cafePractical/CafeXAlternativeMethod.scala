@@ -1,4 +1,4 @@
-package lectures.practice
+package lectures.practice.cafePractical
 
 object CafeXAlternativeMethod extends App {
 
@@ -34,15 +34,15 @@ object CafeXAlternativeMethod extends App {
   trait isPremium {}
 
   trait Hot {}
+
   trait Cold {}
 
 
-
-  def billCalculator (customerOrder: List[MenuItem]) = {
+  def billCalculator(customerOrder: List[MenuItem]) = {
     val price = customerOrder.map(x => x.cost).sum
     println(s"The cost of your items is: £${price}")
 
-   
+
   }
 
   val order: List[MenuItem] = List(Coffee, SteakSandwich)
@@ -50,7 +50,6 @@ object CafeXAlternativeMethod extends App {
 
 
   // try to loop through the list and examine if there are any items that extend Food and Hot
-
 
 
 }

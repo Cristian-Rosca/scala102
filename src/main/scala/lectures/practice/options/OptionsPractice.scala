@@ -1,4 +1,4 @@
-package lectures.practice
+package lectures.practice.options
 
 object OptionsPractice extends App {
 

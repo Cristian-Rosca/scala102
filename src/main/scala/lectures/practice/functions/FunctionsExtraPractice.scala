@@ -1,4 +1,4 @@
-package lectures.practice
+package lectures.practice.functions
 
 import scala.util.Random
 
@@ -22,17 +22,15 @@ object FunctionsExtraPractice extends App {
   // If no quote is supplied return a random (use scala.util.Random) philosophy quote.
   // See https://www.philosophybasics.com/general_quotes.html
 
-  val philQuotes = List("The unexamined life is not worth living", "Whereof one cannot speak, thereof one must be silent", "Entities should not be multiplied unnecessarily" )
+  val philQuotes = List("The unexamined life is not worth living", "Whereof one cannot speak, thereof one must be silent", "Entities should not be multiplied unnecessarily")
 
-val returnQuoteOrPhilosophy: (Option[String]) => String = quote => quote match {
-  case None => philQuotes(Random.nextInt(philQuotes.size))
-  case Some(value) => value
-}
+  val returnQuoteOrPhilosophy: (Option[String]) => String = quote => quote match {
+    case None => philQuotes(Random.nextInt(philQuotes.size))
+    case Some(value) => value
+  }
 
 
   // Create a higher order function that accepts either of the quote functions above.
-
-
 
 
   def nonsenseHOF(function: (Option[String]) => String, myStr: Option[String]) = {
@@ -43,6 +41,6 @@ val returnQuoteOrPhilosophy: (Option[String]) => String = quote => quote match {
     }
   }
 
-println(nonsenseHOF(returnQuoteOrPhilosophy,None))
+  println(nonsenseHOF(returnQuoteOrPhilosophy, None))
 
 }

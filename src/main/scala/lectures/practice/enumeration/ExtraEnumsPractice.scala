@@ -1,6 +1,6 @@
-package lectures.practice
+package lectures.practice.enumeration
 
-import lectures.practice.ExtraEnumsPractice.TypeOfAnimalTrait.{Bird, Mammal, Reptile}
+import lectures.practice.enumeration.ExtraEnumsPractice.TypeOfAnimalTrait.{Mammal, Reptile, Bird}
 
 object ExtraEnumsPractice extends App {
 
@@ -13,7 +13,7 @@ object ExtraEnumsPractice extends App {
   */
 
   // Enum method
-  case class Animal (name: String, typeOfAnimal: TypeOfAnimalEnum.Value, canFly: CanFly.Value)
+  case class Animal(name: String, typeOfAnimal: TypeOfAnimalEnum.Value, canFly: CanFly.Value)
 
   object TypeOfAnimalEnum extends Enumeration {
     val Reptile, Bird, Mammal = Value
@@ -26,7 +26,7 @@ object ExtraEnumsPractice extends App {
   val crocodileEnum = Animal("Bob", TypeOfAnimalEnum.Reptile, CanFly.No)
   val catEnum = Animal("Mary", TypeOfAnimalEnum.Mammal, CanFly.No)
 
-  def animalTypeIdentifier (animal: Animal) = {
+  def animalTypeIdentifier(animal: Animal) = {
     animal.typeOfAnimal match {
       case TypeOfAnimalEnum.Reptile => println("I'm a reptile")
       case TypeOfAnimalEnum.Mammal => println("I'm a mammal")
@@ -35,13 +35,15 @@ object ExtraEnumsPractice extends App {
   }
 
   // Case Class method
-  case class AnimalAlt (name: String, typeOfAnimal: TypeOfAnimalTrait, canFly: CanFlyTrait )
+  case class AnimalAlt(name: String, typeOfAnimal: TypeOfAnimalTrait, canFly: CanFlyTrait)
 
   sealed trait TypeOfAnimalTrait
 
   object TypeOfAnimalTrait {
     case object Reptile extends TypeOfAnimalTrait
+
     case object Bird extends TypeOfAnimalTrait
+
     case object Mammal extends TypeOfAnimalTrait
   }
 
@@ -49,7 +51,9 @@ object ExtraEnumsPractice extends App {
 
   object CanFlyTrait {
     case object Yes extends CanFlyTrait
+
     case object No extends CanFlyTrait
+
     case object Maybe extends CanFlyTrait
   }
 
@@ -57,7 +61,7 @@ object ExtraEnumsPractice extends App {
 
   val altCat = AnimalAlt("Kat", TypeOfAnimalTrait.Mammal, CanFlyTrait.Yes)
 
-  def altAnimalTypeIdentifier (animal: AnimalAlt) = {
+  def altAnimalTypeIdentifier(animal: AnimalAlt) = {
     animal.typeOfAnimal match {
       case Reptile => println("I'm a reptile")
       case Mammal => println("I'm a mammal")

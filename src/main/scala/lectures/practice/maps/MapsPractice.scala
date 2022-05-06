@@ -1,4 +1,4 @@
-package lectures.practice
+package lectures.practice.maps
 
 object MapsPractice extends App {
 
@@ -9,13 +9,13 @@ object MapsPractice extends App {
   */
 
   val macbookFunction: (String) => String = word => {
-   val capitalisedWord = word.toList.map(_.toUpper).mkString("")
+    val capitalisedWord = word.toList.map(_.toUpper).mkString("")
     s"${capitalisedWord} ARE THE BEST"
   }
 
-println(macbookFunction("macbooks"))
+  println(macbookFunction("macbooks"))
 
-/*
+  /*
 Write a function which
 - Turns a list of strings to ints e.g. List(“1”, “2”, “3”) -> List(1,2,3)
 - Multiplies each int by 2
@@ -23,8 +23,8 @@ Write a function which
 
 */
 
-val stringMultiplyAndSum: (List[String]) => Int = inputStringList => {
-  inputStringList.map(x => x.toInt * 2).sum
-}
+  val stringMultiplyAndSum: (List[String]) => Int = inputStringList => {
+    inputStringList.map(x => x.toInt * 2).sum
+  }
 
 }

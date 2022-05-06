@@ -1,4 +1,4 @@
-package lectures.practice
+package lectures.practice.interpolation
 
 object InterpolationPractice extends App {
 
@@ -20,7 +20,7 @@ object InterpolationPractice extends App {
 
   println(raw"\n\n\n\n\n\n\n\nsameline\n\n")
 
-  case class Person (name: String, age: Float, favFruits: List[String])
+  case class Person(name: String, age: Float, favFruits: List[String])
 
   val gary = Person("Gary", 22.2392, List("apples, oranges"))
 

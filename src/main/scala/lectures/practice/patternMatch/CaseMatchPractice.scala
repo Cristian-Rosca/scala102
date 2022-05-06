@@ -1,20 +1,20 @@
-package lectures.practice
+package lectures.practice.patternMatch
 
 object CaseMatchPractice extends App {
 
-  val flavour : String = "Chocolate"
+  val flavour: String = "Chocolate"
 
-  flavour match{
+  flavour match {
     case "Chocolate" => "chocolate fudge brownie"
     case "Caramel" => "caramel chew chew"
     case "Cookie" => "cookie dough"
-    case _=>  flavour
+    case _ => flavour
   }
 
   println("What size pizza would you like?")
   var pizzaSize = scala.io.StdIn.readLine()
 
-  pizzaSize match{
+  pizzaSize match {
     case "7" => println("personal")
     case "9" => println("small")
     case "11" => println("medium")
@@ -43,15 +43,15 @@ object CaseMatchPractice extends App {
       var cost = 12.99
     case 13 if customerOrder.isStuffed == true => println("large with stuffed crust")
       var cost = 14.99 + 2.99
-    case 13  => println("large")
+    case 13 => println("large")
       var cost = 14.99
-    case _=> println("medium")
+    case _ => println("medium")
       var cost = 12.99
   }
 
 
-  def cityCapitaliser (city: String) : String = {
-    city.toLowerCase() match{
+  def cityCapitaliser(city: String): String = {
+    city.toLowerCase() match {
       case "london" => city.toUpperCase()
       case "belfast" => city.toUpperCase()
       case "Cardiff" => city.toUpperCase()
@@ -62,61 +62,55 @@ object CaseMatchPractice extends App {
   }
 
 
-// Write a animal abstract class
+  // Write a animal abstract class
 
-abstract class Animal {
-  val name: String
-  val age: Int
-}
-
-case class Dog (name: String, age: Int) extends Animal
-
-case class Cat (name: String, age: Int) extends Animal
-
-var darcy = Dog("darcy", 12)
-
-def animalTypeCheck(animal: Animal) = {
-  animal.getClass.toString match{
-    case "class lectures.part1basics.CaseMatchPractice$Dog" if animal.name.toLowerCase == "sam" => println(s"Sam's age is ${animal.age}")
-    case "class lectures.part1basics.CaseMatchPractice$Dog" => println("Dog")
-    case "class lectures.part1basics.CaseMatchPractice$Cat" => println("Cat")
-    case _ => println("other")
+  abstract class Animal {
+    val name: String
+    val age: Int
   }
-}
 
+  case class Dog(name: String, age: Int) extends Animal
 
-def isSame(animal: Animal) = {
-  animal.name.toLowerCase() match {
-    case "sam" => println(s"Sam's age is ${animal.age}")
-    case _ => println("this is not sam")
+  case class Cat(name: String, age: Int) extends Animal
+
+  var darcy = Dog("darcy", 12)
+
+  def animalTypeCheck(animal: Animal) = {
+    animal.getClass.toString match {
+      case "class lectures.part1basics.CaseMatchPractice$Dog" if animal.name.toLowerCase == "sam" => println(s"Sam's age is ${animal.age}")
+      case "class lectures.part1basics.CaseMatchPractice$Dog" => println("Dog")
+      case "class lectures.part1basics.CaseMatchPractice$Cat" => println("Cat")
+      case _ => println("other")
+    }
   }
-}
 
-// doing this with case/match would be too long?
-def animalAgeChecker (animal: Animal) = {
-  if (animal.age > 10) {
-    println(s"${animal.name} is ${animal.age} years old")
-  }
-  else {
-    println(s"${animal.name} is young")
-  }
-}
 
-// tried doing this using case/match here?
-  def animalAgeChecker2 (animal: Animal) = {
+  def isSame(animal: Animal) = {
+    animal.name.toLowerCase() match {
+      case "sam" => println(s"Sam's age is ${animal.age}")
+      case _ => println("this is not sam")
+    }
+  }
+
+  // doing this with case/match would be too long?
+  def animalAgeChecker(animal: Animal) = {
+    if (animal.age > 10) {
+      println(s"${animal.name} is ${animal.age} years old")
+    }
+    else {
+      println(s"${animal.name} is young")
+    }
+  }
+
+  // tried doing this using case/match here?
+  def animalAgeChecker2(animal: Animal) = {
     val isYoung = if (animal.age > 10) false else true
 
     isYoung match {
       case false => println(s"${animal.name} is young")
       case true => println(s"${animal.name} is ${animal.age} years old")
     }
-   }
-
-
-
-
-
-
+  }
 
 
 }
