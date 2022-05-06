@@ -12,7 +12,6 @@ import java.time.*
 import java.util.Calendar
 
 
-
 object CafeXFinalPractical extends App {
 
   // Menu
@@ -45,7 +44,7 @@ object CafeXFinalPractical extends App {
     }
 
     // Changes currency symbol in receipt
-    val currencySymbol ={
+    val currencySymbol = {
       currency match {
         case GBP => "£"
         case EUR => "€"
@@ -54,7 +53,7 @@ object CafeXFinalPractical extends App {
       }
     }
 
-    // Sum of cost of all items in order list
+    // Sum of cost of all items in order list (adjusted based on selected currency)
     val price = customerOrder.map(x => x.cost).sum * currencyMultiplier
 
     // Calculates the loyalty discount for the customer
@@ -81,7 +80,7 @@ object CafeXFinalPractical extends App {
     }
 
     // Full order price - Loyalty discount - happy hour discount (if applicable)
-    val loyaltyPrice = price - loyaltyDiscount - happyHourDiscount
+    val finalPrice = price - loyaltyDiscount - happyHourDiscount
 
     // Calculates rate that Service Charge is based on
     val tipMultiplier = {
@@ -92,24 +91,25 @@ object CafeXFinalPractical extends App {
     }
 
     // Service Charge
-    // Calculated based on loyaltyPrice (Full order price - Loyalty discount)
+    // Calculated based on finalPrice (Full order price - Loyalty discount)
     val serviceCharge: Double = {
       if (customerOrder.find(x => (x.isPremium == true) && (x.foodOrDrink == Food)).isDefined)
-        if (loyaltyPrice * tipMultiplier >= 40) 40 // Maximum of £40 if premium items in order
-        else loyaltyPrice * tipMultiplier
+        if (finalPrice * tipMultiplier >= 40) 40 // Maximum of £40 if premium items in order
+        else finalPrice * tipMultiplier
       else if (customerOrder.find(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)).isDefined)
-        if (loyaltyPrice * tipMultiplier >= 20) 20 // Maximum of £40 if premium items in order
-        else loyaltyPrice * tipMultiplier
-      else loyaltyPrice * tipMultiplier
+        if (finalPrice * tipMultiplier >= 20) 20 // Maximum of £40 if premium items in order
+        else finalPrice * tipMultiplier
+      else finalPrice * tipMultiplier
     }
 
-    val totalCharge = loyaltyPrice + serviceCharge
+    val totalCharge = finalPrice + serviceCharge
 
 
 
     // Statements to print customer bill
     println(s"Thank you for shopping with us, ${customer.name}!")
 
+    // Print names of premium items ordered
     println("Please see your order summary below")
     println("---------")
     println("Premium Items")
@@ -117,18 +117,19 @@ object CafeXFinalPractical extends App {
       println(s"• ${element}")
     }
 
+    // Print names of food items ordered
     println("---------")
     println("Food")
     for (element <- foodNames) {
       println(s"• ${element}")
     }
 
+    // Print names of drinks ordered
     println("---------")
     println("Drinks")
     for (element <- drinkNames) {
       println(s"• ${element}")
     }
-
 
     println("---------")
     println(f"The cost of your items is: $currencySymbol$price%.2f")
@@ -138,8 +139,9 @@ object CafeXFinalPractical extends App {
     println("---------")
     println(f"The total for the order is: $currencySymbol$totalCharge%.2f")
 
+    // Additional Information
     println("---------")
-    println(s"Transaction time: ${Calendar.getInstance.getTime}")
+    println(s"Transaction time: ${Calendar.getInstance.getTime}") // got local date and time using different method (just for practice sake)
     println(s"Card ending in: ${customer.cardEnding}")
 
   }
@@ -167,7 +169,6 @@ object CafeXFinalPractical extends App {
 
   // Calling billCalculator method -> pass list of ordered items, customer and currency (GBP, EUR or USD)
   billCalculator(order, bob, GBP)
-
 
 
 }
