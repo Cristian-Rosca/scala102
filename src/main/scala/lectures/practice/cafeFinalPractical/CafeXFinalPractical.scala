@@ -147,7 +147,7 @@ object CafeXFinalPractical extends App {
   }
 
   // List of ordered items
-  val order = List(cheeseSandwich, steakSandwich, lobster, cola, coffee)
+  val order = List(cheeseSandwich, steakSandwich, cola, coffee)
 
   // Creates a list of premium items in the order to be printed on receipt
   val premiumItemNames = {
