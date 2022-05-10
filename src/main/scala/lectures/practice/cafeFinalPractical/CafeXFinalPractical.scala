@@ -32,118 +32,118 @@ object CafeXFinalPractical extends App {
   // Bill Calculator
   // Takes a list of ordered items and the customer
   def billCalculator(customerOrder: List[MenuItem], customer: Customer, currency: Currency) = {
-
-    // Update exchange rates here if necessary - can import live fx rates as an extension
-    val currencyMultiplier = {
-      currency match {
-        case GBP => 1
-        case EUR => 1.15
-        case USD => 1.23
-        case _ => 1
+    if (customerOrder.isEmpty) println("No items added to customer order. Please add items and try again") else {
+      // Update exchange rates here if necessary - can import live fx rates as an extension
+      val currencyMultiplier = {
+        currency match {
+          case GBP => 1
+          case EUR => 1.15
+          case USD => 1.23
+          case _ => 1
+        }
       }
-    }
 
-    // Changes currency symbol in receipt
-    val currencySymbol = {
-      currency match {
-        case GBP => "£"
-        case EUR => "€"
-        case USD => "$"
-        case _ => "£"
+      // Changes currency symbol in receipt
+      val currencySymbol = {
+        currency match {
+          case GBP => "£"
+          case EUR => "€"
+          case USD => "$"
+          case _ => "£"
+        }
       }
-    }
 
-    // Sum of cost of all items in order list (adjusted based on selected currency)
-    val price = customerOrder.map(x => x.cost).sum * currencyMultiplier
+      // Sum of cost of all items in order list (adjusted based on selected currency)
+      val price = customerOrder.map(x => x.cost).sum * currencyMultiplier
 
-    // Calculates the loyalty discount for the customer
-    val loyaltyDiscount = {
-      val loyaltyDiscountPercentage =
-        if (customer.loyaltyStars < 3) 0
-        else if (customer.loyaltyStars < 9) customer.loyaltyStars * 0.025
-        else 0.2
+      // Calculates the loyalty discount for the customer
+      val loyaltyDiscount = {
+        val loyaltyDiscountPercentage =
+          if (customer.loyaltyStars < 3) 0
+          else if (customer.loyaltyStars < 9) customer.loyaltyStars * 0.025
+          else 0.2
 
-      // Premium Items are not discountable
-      val premiumItemsList = customerOrder.filter(x => (x.isPremium == true))
-      val nonDiscountablePrice = premiumItemsList.map(x => x.cost).sum
+        // Premium Items are not discountable
+        val premiumItemsList = customerOrder.filter(x => (x.isPremium == true))
+        val nonDiscountablePrice = premiumItemsList.map(x => x.cost).sum
 
-      (price - nonDiscountablePrice) * loyaltyDiscountPercentage
-    }
+        (price - nonDiscountablePrice) * loyaltyDiscountPercentage
+      }
 
-    val happyHourDiscount = {
-      // Get total cost of drinks in order
-      val drinksOrderCost = customerOrder.filter(x => (x.foodOrDrink == Drink)).map(x => x.cost).sum * currencyMultiplier
+      val happyHourDiscount = {
+        // Get total cost of drinks in order
+        val drinksOrderCost = customerOrder.filter(x => (x.foodOrDrink == Drink)).map(x => x.cost).sum * currencyMultiplier
 
-      // If local hours is between 18 and 21 happyHourDiscount is half of drink prices, else it is 0
-      if ((timeNow > 17) && (timeNow < 22)) drinksOrderCost * 0.5
-      else 0
-    }
+        // If local hours is between 18 and 21 happyHourDiscount is half of drink prices, else it is 0
+        if ((timeNow > 17) && (timeNow < 22)) drinksOrderCost * 0.5
+        else 0
+      }
 
-    // Full order price - Loyalty discount - happy hour discount (if applicable)
-    val finalPrice = price - loyaltyDiscount - happyHourDiscount
+      // Full order price - Loyalty discount - happy hour discount (if applicable)
+      val finalPrice = price - loyaltyDiscount - happyHourDiscount
 
-    // Calculates rate that Service Charge is based on
-    val tipMultiplier = {
-      if (customerOrder.find(x => (x.isPremium == true) && (x.foodOrDrink == Food)).isDefined) 0.25 // 20% service charge if premium food in order
-      else if (customerOrder.find(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)).isDefined) 0.20 // 20% service charge if hot food in order
-      else if (customerOrder.find(x => FoodOrDrink == Food).isDefined) 0.1 // 10% service charge if food in order
-      else 0 // No service charge if no items are foods
-    }
+      // Calculates rate that Service Charge is based on
+      val tipMultiplier = {
+        if (customerOrder.find(x => (x.isPremium == true) && (x.foodOrDrink == Food)).isDefined) 0.25 // 25% service charge if premium food in order
+        else if (customerOrder.find(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)).isDefined) 0.20 // 20% service charge if hot food in order
+        else if (customerOrder.find(x => (x.hotOrCold == Cold) && (x.foodOrDrink == Food)).isDefined) 0.1 // 10% service charge if food in order
+        else 0 // No service charge if no items are foods
+      }
 
-    // Service Charge
-    // Calculated based on finalPrice (Full order price - Loyalty discount)
-    val serviceCharge: Double = {
-      if (customerOrder.find(x => (x.isPremium == true) && (x.foodOrDrink == Food)).isDefined)
-        if (finalPrice * tipMultiplier >= 40) 40 // Maximum of £40 if premium items in order
+      // Service Charge
+      // Calculated based on finalPrice (Full order price - Loyalty discount)
+      val serviceCharge: Double = {
+        if (customerOrder.find(x => (x.isPremium == true) && (x.foodOrDrink == Food)).isDefined)
+          if (finalPrice * tipMultiplier >= 40) 40 // Maximum of £40 if premium items in order
+          else finalPrice * tipMultiplier
+        else if (customerOrder.find(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)).isDefined)
+          if (finalPrice * tipMultiplier >= 20) 20 // Maximum of £40 if premium items in order
+          else finalPrice * tipMultiplier
         else finalPrice * tipMultiplier
-      else if (customerOrder.find(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)).isDefined)
-        if (finalPrice * tipMultiplier >= 20) 20 // Maximum of £40 if premium items in order
-        else finalPrice * tipMultiplier
-      else finalPrice * tipMultiplier
+      }
+
+      val totalCharge = finalPrice + serviceCharge
+
+
+
+      // Statements to print customer bill
+      println(s"Thank you for shopping with us, ${customer.name}!")
+
+      // Print names of premium items ordered
+      println("Please see your order summary below")
+      println("---------")
+      println("Premium Items")
+      for (element <- premiumItemNames) {
+        println(s"• ${element}")
+      }
+
+      // Print names of food items ordered
+      println("---------")
+      println("Food")
+      for (element <- foodNames) {
+        println(s"• ${element}")
+      }
+
+      // Print names of drinks ordered
+      println("---------")
+      println("Drinks")
+      for (element <- drinkNames) {
+        println(s"• ${element}")
+      }
+
+      println("---------")
+      println(f"The cost of your items is: $currencySymbol$price%.2f")
+      println(f"Based on ${customer.loyaltyStars} loyalty stars, you received a loyalty discount of: $currencySymbol$loyaltyDiscount%.2f")
+      if ((timeNow > 17) && (timeNow < 22)) println(f"The happy hour discount is: $currencySymbol$happyHourDiscount%.2f")
+      println(f"The service charge is: $currencySymbol$serviceCharge%.2f")
+      println("---------")
+      println(f"The total for the order is: $currencySymbol$totalCharge%.2f")
+
+      // Additional Information
+      println("---------")
+      println(s"Transaction time: ${Calendar.getInstance.getTime}") // got local date and time using different method (just for practice sake)
+      println(s"Card ending in: ${customer.cardEnding}")
     }
-
-    val totalCharge = finalPrice + serviceCharge
-
-
-
-    // Statements to print customer bill
-    println(s"Thank you for shopping with us, ${customer.name}!")
-
-    // Print names of premium items ordered
-    println("Please see your order summary below")
-    println("---------")
-    println("Premium Items")
-    for (element <- premiumItemNames) {
-      println(s"• ${element}")
-    }
-
-    // Print names of food items ordered
-    println("---------")
-    println("Food")
-    for (element <- foodNames) {
-      println(s"• ${element}")
-    }
-
-    // Print names of drinks ordered
-    println("---------")
-    println("Drinks")
-    for (element <- drinkNames) {
-      println(s"• ${element}")
-    }
-
-    println("---------")
-    println(f"The cost of your items is: $currencySymbol$price%.2f")
-    println(f"Based on ${customer.loyaltyStars} loyalty stars, you received a loyalty discount of: $currencySymbol$loyaltyDiscount%.2f")
-    if ((timeNow > 17) && (timeNow < 22)) println(f"The happy hour discount is: $currencySymbol$happyHourDiscount%.2f")
-    println(f"The service charge is: $currencySymbol$serviceCharge%.2f")
-    println("---------")
-    println(f"The total for the order is: $currencySymbol$totalCharge%.2f")
-
-    // Additional Information
-    println("---------")
-    println(s"Transaction time: ${Calendar.getInstance.getTime}") // got local date and time using different method (just for practice sake)
-    println(s"Card ending in: ${customer.cardEnding}")
-
   }
 
   // List of ordered items
