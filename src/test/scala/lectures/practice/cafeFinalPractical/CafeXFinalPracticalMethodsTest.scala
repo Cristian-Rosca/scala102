@@ -21,11 +21,11 @@ val cheeseSandwich = MenuItem("Cheese Sandwich", Food, Cold, 2.00, false)
 val steakSandwich = MenuItem("Steak Sandwich", Food, Hot, 4.00, false)
 val lobster = MenuItem("Lobster", Food, Hot, 25.00, true)
 
-class CalculateOrderCostTest extends AnyWordSpec {
+class CalculateOrderCostTest extends AnyWordSpec { //TODO: You can use one class for the whole scala file
   "A order cost calculator" should {
-    "calculate the total order cost with one item in order list" in {
+    "calculate the total order cost with one item in order list" in { //TODO: YES! Exactly how a test should be done!
       val customerOrder = List(cheeseSandwich)
-      assert(calculateOrderCost(customerOrder) == 2.0)
+      assert(calculateOrderCost(customerOrder) == 2.0) //TODO: Try .equals over ==
     }
 
     "calculate the total order cost with multiple in order list" in {
