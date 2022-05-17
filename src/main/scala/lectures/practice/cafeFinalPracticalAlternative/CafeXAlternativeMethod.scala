@@ -17,6 +17,11 @@ object CafeXAlternativeMethod extends App {
     override val cost: BigDecimal = 1.00
   }
 
+  case class Tea(teaCost: Double) extends MenuItem with Hot with Drink {
+    override val itemName: String = "tea"
+    override val cost: BigDecimal = teaCost
+  }
+  
   object CheeseSandwich extends MenuItem with Cold with Food {
     override val itemName: String = "Cheese Sandwich"
     override val cost: BigDecimal = 2.20

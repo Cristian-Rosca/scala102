@@ -7,16 +7,21 @@ import lectures.practice.cafeFinalPractical.FoodOrDrink.*
 import lectures.practice.cafeFinalPractical.HotOrCold.*
 import lectures.practice.cafeFinalPractical.MenuItem
 import lectures.practice.cafeFinalPractical.Customer
+import lectures.practice.cafeFinalPracticalAlternative.CafeXAlternativeMethod.{Coffee, Tea}
 
-import java.time.*
-import java.util.Calendar
+import java.time.LocalTime
+
+
 
 
 object CafeXFinalPractical extends App {
   //TODO: First off, really happy with how the case classes, objects and traits were used!
   // Menu
-  val cola = MenuItem("Cola", Drink, Cold, 0.50, false) //TODO: using named parameters helps us to recognise what these types correlate to, e.g. MenuItem(..., isPremium = false)
+  val cola = MenuItem("Cola", Drink, Cold, cost = 0.50, isPremium = false) //TODO: using named parameters helps us to recognise what these types correlate to, e.g. MenuItem(..., isPremium = false)
   val coffee = MenuItem("Coffee", Drink, Hot, 1.00, false)
+  val coffee1 = MenuItem("Coffeeeeee", Food, Hot, 1.00, false)
+  val coffee2 = Coffee
+  val teaLarge = Tea(teaCost = 6)
   val cheeseSandwich = MenuItem("Cheese Sandwich", Food, Cold, 2.00, false)
   val steakSandwich = MenuItem("Steak Sandwich", Food, Hot, 4.00, false)
   val lobster = MenuItem("Lobster", Food, Hot, 25.00, true)
@@ -26,9 +31,10 @@ object CafeXFinalPractical extends App {
   val bob = Customer("Bob", 5, 2001)
 
   //TODO: So we don't tend to comment on what a method does, the name of the method and the contents should really explain it, if it doesn't then you've written it wrong!
+
   // set currency for calculations
   // Update exchange rates here if necessary - can import live fx rates as an extension
-  def setCurrency(currency: Currency) = { //TODO: Return type?
+  def setCurrency(currency: Currency): Double = { //TODO: Return type?
     currency match { //TODO: Great use of pattern matching!
       case GBP => 1
       case EUR => 1.15
@@ -38,7 +44,7 @@ object CafeXFinalPractical extends App {
   } //TODO: setCurrency sounds like you should be returning a currency, but we are returning a value... possibly getCurrencyValue or something?
 
   // Changes currency symbol in receipt
-  def setCurrencySymbol(currency: Currency) = { //TODO: could the above function be combined into this one???
+  def setCurrencySymbol(currency: Currency): String = { //TODO: could the above function be combined into this one???
     currency match {
       case GBP => "£"
       case EUR => "€"
@@ -48,19 +54,23 @@ object CafeXFinalPractical extends App {
   }
 
   //TODO: again, these comments aren't needed
+
   // calculate cost of order
-  def calculateOrderCost(customerOrder: List[MenuItem]) = customerOrder.map(x => x.cost).sum //TODO: return type?
+  def calculateOrderCost(customerOrder: List[MenuItem]): Double = customerOrder.map(x => x.cost).sum //TODO: return type?
 
   // get loyalty discount percentage
-  def loyaltyDiscountPercentage(customer: Customer) = { //TODO: HUGE NO NO! DON'T RETURN AN "ANY" TYPE!!! (Can you spot why this is an Any Type? Hint: Try giving this a return type now)
-    if (customer.loyaltyStars < 3) 0
-    else if (customer.loyaltyStars < 9) customer.loyaltyStars * 0.025
-    else 0.2
+  def loyaltyDiscountPercentage(customer: Customer): Double = { //TODO: HUGE NO NO! DON'T RETURN AN "ANY" TYPE!!! (Can you spot why this is an Any Type? Hint: Try giving this a return type now)
+    if (customer.loyaltyStars < 3)
+      0
+    else if (customer.loyaltyStars < 9)
+      customer.loyaltyStars * 0.025
+    else
+      0.2
   }
 
   //TODO: These 5 functions could be combined into one function????
   // get premium items method
-  def getPremiumItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => (x.isPremium == true)) //TODO: don't need hte == true
+  def getPremiumItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => x.isPremium) //TODO: don't need hte == true
 
   // get drink items method
   def getDrinkItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => (x.foodOrDrink == Drink)) //TODO: we tend to use .equals over ==
@@ -69,13 +79,16 @@ object CafeXFinalPractical extends App {
   def getHotFoodItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food)) //TODO: Good use of filter throughout
 
   // get cold food items
-  def getColdFoodItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => (x.hotOrCold == Cold) && (x.foodOrDrink == Food))
+  def getColdFoodItems(customerOrder: List[MenuItem]): List[MenuItem] =
+    customerOrder.filter { item =>
+      (item.hotOrCold == Cold) && (item.foodOrDrink == Food)
+    }
 
   // get non premium foods
-  def getNonPremiumFoodItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => (x.isPremium == false) && (x.foodOrDrink == Food))
+  def getNonPremiumFoodItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => !x.isPremium && (x.foodOrDrink == Food))
 
   // get service charge ratio based on items in customer order
-  def getServiceChargeRatio(customerOrder: List[MenuItem]) = { //TODO: Great use of .nonEmpty, but wasn't there a cap up to £20?
+  def getServiceChargeRatio(customerOrder: List[MenuItem]): Double = { //TODO: Great use of .nonEmpty, but wasn't there a cap up to £20?
     if (getPremiumItems(customerOrder).nonEmpty) 0.25 // 25% service charge if premium food in order
     else if (getHotFoodItems(customerOrder).nonEmpty) 0.20 // 20% service charge if hot food in order
     else if (getColdFoodItems(customerOrder).nonEmpty) 0.1 // 10% service charge if food in order
@@ -83,7 +96,7 @@ object CafeXFinalPractical extends App {
   }
 
   // Creates a list of premium items in the order to be printed on receipt
-  def getPremiumItemNames(customerOrder: List[MenuItem]) = { //TODO: RETURNING AN ANY!!!
+  def getPremiumItemNames(customerOrder: List[MenuItem]): List[String] = { //TODO: RETURNING AN ANY!!!
     getPremiumItems(customerOrder).map(x => x.name) //TODO: Try to avoid using x in your maps and filters, a simple name will add to your readability
   }
 
@@ -98,10 +111,10 @@ object CafeXFinalPractical extends App {
   }
 
   // Get local time in hours
-  val timeNow = LocalTime.now.getHour()
+  val timeNow = LocalTime.now.getHour
 
   // Check if happy hour is on now
-  def isHappyHour: Boolean = if ((timeNow > 17) && (timeNow < 22)) true else false //TODO: What does ((timeNow > 17) && (timeNow < 22)) return?
+  def isHappyHour: Boolean = ((timeNow >= 16) && (timeNow <= 21))  //TODO: What does ((timeNow > 17) && (timeNow < 22)) return?
 
 
   // BILL CALCULATOR
@@ -111,9 +124,10 @@ object CafeXFinalPractical extends App {
 
 
       // Sum of cost of all items in order list (adjusted based on selected currency)
-      val price = calculateOrderCost(customerOrder) * setCurrency(currency) //TODO: the return type of price is Any...
-      //TODO: Instead of price, what about inital price (I'm being picky here)
+      val price: Double = calculateOrderCost(customerOrder) * setCurrency(currency) //TODO: the return type of price is Any...
+      //TODO: Instead of price, what about initial price (I'm being picky here)
 
+      val nonDiscountablePrice = calculateOrderCost(getPremiumItems(customerOrder)) * setCurrency(currency)
       // Calculates the loyalty discount for the customer
       val loyaltyDiscount = {
         // Premium Items are not discountable - get cost of premium items in order
@@ -190,7 +204,7 @@ object CafeXFinalPractical extends App {
 
       // Additional Information
       println("---------")
-      println(s"Transaction time: ${Calendar.getInstance.getTime}") // got local date and time using different method (just for practice sake)
+      //println(s"Transaction time: ${Calendar.getInstance.getTime}") // got local date and time using different method (just for practice sake)
       println(s"Card ending in: ${customer.cardEnding}")
     }
   }
