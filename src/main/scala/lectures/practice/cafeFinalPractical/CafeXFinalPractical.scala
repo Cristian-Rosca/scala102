@@ -15,7 +15,7 @@ import java.util.Calendar
 object CafeXFinalPractical extends App {
 
   // Menu
-  val cola = MenuItem("Cola", Drink, Cold, 0.50, false)
+  val cola = MenuItem(name ="Cola",foodOrDrink = Drink,hotOrCold = Cold, cost = 0.50, isPremium = false)
   val coffee = MenuItem("Coffee", Drink, Hot, 1.00, false)
   val cheeseSandwich = MenuItem("Cheese Sandwich", Food, Cold, 2.00, false)
   val steakSandwich = MenuItem("Steak Sandwich", Food, Hot, 4.00, false)
@@ -26,137 +26,98 @@ object CafeXFinalPractical extends App {
   val bob = Customer("Bob", 5, 2001)
 
 
-  // set currency for calculations
-  // Update exchange rates here if necessary - can import live fx rates as an extension
-  def setCurrency(currency: Currency) = {
-    currency match {
-      case GBP => 1
-      case EUR => 1.15
-      case USD => 1.23
-      case _ => 1
-    }
-  }
-
-  // Changes currency symbol in receipt
-  def setCurrencySymbol(currency: Currency) = {
-    currency match {
-      case GBP => "£"
-      case EUR => "€"
-      case USD => "$"
-      case _ => "£"
-    }
-  }
-
   // calculate cost of order
-  def calculateOrderCost(customerOrder: List[MenuItem]) = customerOrder.map(x => x.cost).sum
+  def calculateOrderCost(customerOrder: List[MenuItem]): Double = customerOrder.map(x => x.cost).sum
 
   // get loyalty discount percentage
-  def loyaltyDiscountPercentage(customer: Customer) = {
+  def calculateLoyaltyDiscountPercentage(customer: Customer): Double = {
     if (customer.loyaltyStars < 3) 0
     else if (customer.loyaltyStars < 9) customer.loyaltyStars * 0.025
     else 0.2
   }
 
-  // get premium items method
-  def getPremiumItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => (x.isPremium == true))
 
-  // get drink items method
-  def getDrinkItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => (x.foodOrDrink == Drink))
+  def getPremiumItemsFromOrder(customerOrder: List[MenuItem]): List[MenuItem] = customerOrder.filter(x => x.isPremium == true)
 
-  // get hot food items
-  def getHotFoodItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food))
+  def getDrinkItemsFromOrder(customerOrder: List[MenuItem]): List[MenuItem] = customerOrder.filter(x => x.foodOrDrink == Drink)
 
-  // get cold food items
-  def getColdFoodItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => (x.hotOrCold == Cold) && (x.foodOrDrink == Food))
+  def getHotFoodItemsFromOrder(customerOrder: List[MenuItem]): List[MenuItem] = customerOrder.filter(x => (x.hotOrCold == Hot) && (x.foodOrDrink == Food))
 
-  // get non premium foods
-  def getNonPremiumFoodItems(customerOrder: List[MenuItem]) = customerOrder.filter(x => (x.isPremium == false) && (x.foodOrDrink == Food))
+  def getColdFoodItemsFromOrder(customerOrder: List[MenuItem]): List[MenuItem] = customerOrder.filter(x => (x.hotOrCold == Cold) && (x.foodOrDrink == Food))
 
-  // get service charge ratio based on items in customer order
-  def getServiceChargeRatio(customerOrder: List[MenuItem]) = {
-    if (getPremiumItems(customerOrder).nonEmpty) 0.25 // 25% service charge if premium food in order
-    else if (getHotFoodItems(customerOrder).nonEmpty) 0.20 // 20% service charge if hot food in order
-    else if (getColdFoodItems(customerOrder).nonEmpty) 0.1 // 10% service charge if food in order
+  def getNonPremiumFoodItemsFromOrder(customerOrder: List[MenuItem]): List[MenuItem] = customerOrder.filter(x => (x.isPremium == false) && (x.foodOrDrink == Food))
+
+
+  def getServiceChargeRatio(customerOrder: List[MenuItem]): Double = {
+    if (getPremiumItemsFromOrder(customerOrder).nonEmpty) 0.25 // 25% service charge if premium food in order
+    else if (getHotFoodItemsFromOrder(customerOrder).nonEmpty) 0.20 // 20% service charge if hot food in order
+    else if (getColdFoodItemsFromOrder(customerOrder).nonEmpty) 0.1 // 10% service charge if food in order
     else 0 // No service charge if no items are foods
   }
 
-  // Creates a list of premium items in the order to be printed on receipt
-  def getPremiumItemNames(customerOrder: List[MenuItem]) = {
-    getPremiumItems(customerOrder).map(x => x.name)
+  def getPremiumItemNames(customerOrder: List[MenuItem]): List[String] = {
+    getPremiumItemsFromOrder(customerOrder).map(x => x.name)
   }
 
-  // Creates a list of food items in the order to be printed on receipt
-  def getNonPremiumFoodItemNames(customerOrder: List[MenuItem]) = {
-    getNonPremiumFoodItems(customerOrder).map(x => x.name)
+  def getNonPremiumFoodItemNames(customerOrder: List[MenuItem]): List[String] = {
+    getNonPremiumFoodItemsFromOrder(customerOrder).map(x => x.name)
   }
 
-  // get list of drink names to be printed on receipt
-  def getDrinkNames(customerOrder: List[MenuItem]) = {
-    getDrinkItems(customerOrder).map(x => x.name)
+  def getDrinkNames(customerOrder: List[MenuItem]): List[String] = {
+    getDrinkItemsFromOrder(customerOrder).map(x => x.name)
   }
 
-  // Get local time in hours
-  val timeNow = LocalTime.now.getHour()
+  val timeNow: Int = LocalTime.now.getHour()
 
-  // Check if happy hour is on now
   def isHappyHour: Boolean = if ((timeNow > 17) && (timeNow < 22)) true else false
 
 
-  // BILL CALCULATOR
-  // Takes a list of ordered items and the customer
-  def billCalculator(customerOrder: List[MenuItem], customer: Customer, currency: Currency) = {
+  def generateCustomerBill(customerOrder: List[MenuItem], customer: Customer, selectedCurrency: Currency) = {
     if (customerOrder.isEmpty) println("No items added to customer order. Please add items and try again") else {
 
+      val chosenCurrency: (Double, String) =
+        selectedCurrency match {
+          case GBP => (1, "£")
+          case EUR => (1.15, "")
+          case USD => (1.23, "")
+          case _ => (1, "")
+        }
 
-      // Sum of cost of all items in order list (adjusted based on selected currency)
-      val price = calculateOrderCost(customerOrder) * setCurrency(currency)
+      val totalOrderItemsCost: Double = calculateOrderCost(customerOrder) * chosenCurrency._1
 
+      val nonDiscountablePrice = calculateOrderCost(getPremiumItemsFromOrder(customerOrder)) * chosenCurrency._1
 
-      // Calculates the loyalty discount for the customer
-      val loyaltyDiscount = {
-        // Premium Items are not discountable - get cost of premium items in order
-        val nonDiscountablePrice = calculateOrderCost(getPremiumItems(customerOrder)) * setCurrency(currency)
-        // calculate the total loyalty discount the customer gets
-        (price - nonDiscountablePrice) * loyaltyDiscountPercentage(customer)
-      }
+      val loyaltyDiscount: Double = (totalOrderItemsCost - nonDiscountablePrice) * calculateLoyaltyDiscountPercentage(customer)
 
-
-      val happyHourDiscount = {
-        // Get total cost of drinks in order
-        val drinksOrderCost = calculateOrderCost(getDrinkItems(customerOrder)) * setCurrency(currency)
-
-        // If local hours is between 18 and 21 happyHourDiscount is half of drink prices, else it is 0
+      val drinksOrderCost: Double = calculateOrderCost(getDrinkItemsFromOrder(customerOrder)) * chosenCurrency._1
+      
+      val happyHourDiscount: Double = {
         if (isHappyHour) drinksOrderCost * 0.5
         else 0
       }
 
-      // Full order price - Loyalty discount - happy hour discount (if applicable)
-      val finalPrice = price - loyaltyDiscount - happyHourDiscount
+      val orderCostAfterDiscounts: Double = totalOrderItemsCost - loyaltyDiscount - happyHourDiscount
 
 
-      // Service Charge
-      // Calculated based on finalPrice (Full order price - Loyalty discount)
       val serviceCharge: Double = {
-        val serviceChargeRatio = getServiceChargeRatio(customerOrder)
+        val serviceChargeRatio: Double = getServiceChargeRatio(customerOrder)
 
-        if (getPremiumItems(customerOrder).nonEmpty)
-          if (finalPrice * serviceChargeRatio >= 40) 40 // Maximum of £40 if premium items in order
-          else finalPrice * serviceChargeRatio
-        else if (getHotFoodItems(customerOrder).nonEmpty)
-          if (finalPrice * serviceChargeRatio >= 20) 20 // Maximum of £20 if hot food items in order
-          else finalPrice * serviceChargeRatio
-        else finalPrice * serviceChargeRatio
+        if (getPremiumItemsFromOrder(customerOrder).nonEmpty)
+          if (orderCostAfterDiscounts * serviceChargeRatio >= 40) 40 // Maximum of £40 if premium items in order
+          else orderCostAfterDiscounts * serviceChargeRatio
+        else if (getHotFoodItemsFromOrder(customerOrder).nonEmpty)
+          if (orderCostAfterDiscounts * serviceChargeRatio >= 20) 20 // Maximum of £20 if hot food items in order
+          else orderCostAfterDiscounts * serviceChargeRatio
+        else orderCostAfterDiscounts * serviceChargeRatio
       }
 
-      // calculates total charge
-      val totalCharge = finalPrice + serviceCharge
+      val recommendedTotalCharge: Double = orderCostAfterDiscounts + serviceCharge
 
 
 
       // Statements to print customer bill
       println(s"Thank you for shopping with us, ${customer.name}!")
 
-      // Print names of premium items ordered
       println("Please see your order summary below")
       println("---------")
       println("Premium Items")
@@ -164,14 +125,12 @@ object CafeXFinalPractical extends App {
         println(s"• ${element}")
       }
 
-      // Print names of food items ordered
       println("---------")
       println("Food")
       for (element <- getNonPremiumFoodItemNames(customerOrder)) {
         println(s"• ${element}")
       }
 
-      // Print names of drinks ordered
       println("---------")
       println("Drinks")
       for (element <- getDrinkNames(customerOrder)) {
@@ -179,26 +138,23 @@ object CafeXFinalPractical extends App {
       }
 
       println("---------")
-      println(f"The cost of your items is: ${setCurrencySymbol(currency)}$price%.2f")
-      println(f"Based on ${customer.loyaltyStars} loyalty stars, you received a loyalty discount of: ${setCurrencySymbol(currency)}$loyaltyDiscount%.2f")
-      if ((isHappyHour)) println(f"The happy hour discount is: ${setCurrencySymbol(currency)}$happyHourDiscount%.2f")
-      println(f"The service charge is: ${setCurrencySymbol(currency)}$serviceCharge%.2f")
+      println(f"The cost of your items is: ${chosenCurrency._2}$totalOrderItemsCost%.2f")
+      println(f"Based on ${customer.loyaltyStars} loyalty stars, you received a loyalty discount of: ${chosenCurrency._2}$loyaltyDiscount%.2f")
+      if ((isHappyHour)) println(f"The happy hour discount is: ${chosenCurrency._2}$happyHourDiscount%.2f")
+      println(f"The service charge is: ${chosenCurrency._2}$serviceCharge%.2f")
       println("---------")
-      println(f"The total for the order is: ${setCurrencySymbol(currency)}$totalCharge%.2f")
+      println(f"The total for the order is: ${chosenCurrency._2}$recommendedTotalCharge%.2f")
 
-      // Additional Information
       println("---------")
-      println(s"Transaction time: ${Calendar.getInstance.getTime}") // got local date and time using different method (just for practice sake)
+      println(s"Transaction time: ${Calendar.getInstance.getTime}")
       println(s"Card ending in: ${customer.cardEnding}")
     }
   }
 
 
   // List of ordered items
-  val order = List(cheeseSandwich, coffee, steakSandwich)
+  val customerOrder = List(cheeseSandwich, coffee, steakSandwich)
 
-  // Calling billCalculator method -> pass list of ordered items, customer and currency (GBP, EUR or USD)
-  billCalculator(order, bob, GBP)
-
+  generateCustomerBill(customerOrder = customerOrder,customer = bob,selectedCurrency = GBP)
 
 }
